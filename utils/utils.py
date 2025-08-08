@@ -30,10 +30,11 @@ def PDFtoNumpy(path):
         text
     """
     doc = fitz.open(path)
-    output = np.array()
+    output = []
     for page in doc:
         text = page.get_text()
-    return text
+        output.append(text)
+    return np.array(output)
 
 def pdf2words(pdf_file):
     """
@@ -63,7 +64,7 @@ def count_words(words):
         words: list, the array of words we want to count
 
     Returns: 
-        v: dict, dictionary with the owrds and the number of times it repeats
+        v_sorted: dict, dictionary with the owrds and the number of times it repeats
     """
     v = Counter(words)
     v_sorted = dict(sorted(v.items(), key=lambda item: item[1]))
