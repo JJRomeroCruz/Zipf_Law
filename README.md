@@ -1,0 +1,2 @@
+# Asserting the Zipf Law
+
