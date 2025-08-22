@@ -66,8 +66,23 @@ def count_words(words):
     Returns: 
         v_sorted: dict, dictionary with the owrds and the number of times it repeats
     """
-    v = Counter(words)
-    v_sorted = dict(sorted(v.items(), key=lambda item: item[1]))
+    # flat any structure
+    flattened_words = []
+    for item in words: 
+        if isinstance(item, list):
+            # if is a list, extend with its elements
+            flattened_words.extend([word for word in item if isinstance(word, str)])
+        elif isinstance(item, str):
+            # if is a srting, add it directly
+            flattened_words.append(str(item))
+    
+    # join and process
+    all_text = ' '.join(flattened_words).lower()
+    text = re.findall(r'\w+', all_text)
+    v = Counter(text)
+    v_sorted = dict(sorted(v.items(), key=lambda item: item[1], reverse=True))
     return v_sorted
+
+
 
 
