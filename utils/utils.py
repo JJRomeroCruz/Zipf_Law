@@ -4,6 +4,7 @@ import fitz
 import os
 import re
 from collections import Counter
+import plotly.express as px
 
 def PDFtoTXT(path):
     """
@@ -83,6 +84,31 @@ def count_words(words):
     v_sorted = dict(sorted(v.items(), key=lambda item: item[1], reverse=True))
     return v_sorted
 
+import plotly.express as px
+import pandas as pd
 
+def interactive_word_plot(word_count_dict, top_n=50):
+    """
+    Scatter plot interactivo con Plotly
+    """
+    sorted_words = sorted(word_count_dict.items(), key=lambda x: x[1], reverse=True)
+    top_words = sorted_words[:top_n]
+    
+    # Crear DataFrame
+    df = pd.DataFrame(top_words, columns=['Palabra', 'Frecuencia'])
+    df['Rango'] = range(1, len(df) + 1)
+    
+    fig = px.scatter(df, x='Rango', y='Frecuencia', 
+                    size='Frecuencia', hover_name='Palabra',
+                    title=f'Frecuencia de las {top_n} palabras más comunes',
+                    size_max=60, color='Frecuencia',
+                    labels={'Frecuencia': 'Frecuencia', 'Rango': 'Rango'})
+    
+    fig.update_traces(marker=dict(opacity=0.7),
+                     hovertemplate='<b>%{hovertext}</b><br>Rango: %{x}<br>Frecuencia: %{y}')
+    
+    fig.show()
+
+#interactive_word_plot(v, top_n=50)
 
 
