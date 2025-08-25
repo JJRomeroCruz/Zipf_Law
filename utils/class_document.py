@@ -2,6 +2,7 @@ import fitz
 import re
 import pandas as pd
 import nltk
+from collections import Counter
 
 class document:
     def __init__(self, path):
@@ -67,3 +68,40 @@ class document:
             re.sub('[^A-Za-z0-9]+', '', text)
             output.append(text)
         return nltk.tokenize.word_tokenize(output, language='spanish')
+    
+    def get_pages(self):
+        """
+        Args:
+            document
+        Returns: 
+            pages: float, the number of pages
+        """
+        doc = fitz.open(self.path)
+        return len(doc)
+    
+    def count_words(self):
+        """
+        Args: 
+            document
+        Returns: 
+            v_sorted: dict, dictionary with the owrds and the number of times it repeats
+        """
+        doc = fitz.open(self.path)
+        words = self.get_text_word()
+
+        # flat any structure
+        flattener_words = []
+        for item in words:
+            if isinstance(item, list):
+                # if is a list, extend with its elements
+                flattener_words.extend([word for word in item if isinstance(word, str)])
+            elif isinstance(item, str):
+                #if is a string, add it directly
+                flattener_words.append(str(item))
+        
+        # join and process
+        all_text = ' '.join(flattener_words).lower()
+        text = re.findall(r'\w+', all_text)
+        v = Counter(text)
+        v_sorted = dict(sorted(v.items(), key=lambda item: item[1], reverse=True))
+        return v_sorted
