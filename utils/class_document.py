@@ -28,12 +28,12 @@ class document:
         output = []
         for page in doc:
             # lower
-            page.lower()
+            text = (page.get_text()).lower()
             
             # remove characters that are not numbers or letters
-            re.sub('[^A-Za-z0-9]+', '', page)
+            text = re.sub('[^A-Za-z0-9]+', '', text)
 
-            output.append(page)
+            output.append(text)
         return output
     
     def get_text_sent(self):
@@ -47,10 +47,12 @@ class document:
         output = []
         for page in doc:
             text = page.get_text()
-            text.lower()
-            re.sub('[^A-Za-z0-9]+', '', text)
+            text = text.lower()
+            # no quitamos los signos de puntuacion porque pueden ayudar
+            #text = re.sub('[^A-Za-z0-9]+', '', text)
             output.append(text)
-        return nltk.tokenize.sent_tokenize(output, language='spanish')
+        full_text = " ".join(output)
+        return nltk.tokenize.sent_tokenize(full_text, language='spanish')
     
     def get_text_word(self):
         """
@@ -64,10 +66,11 @@ class document:
         output = []
         for page in doc: 
             text = page.get_text()
-            text.lower()
-            re.sub('[^A-Za-z0-9]+', '', text)
+            text = text.lower()
+            #re.sub('[^A-Za-z0-9]+', '', text)
             output.append(text)
-        return nltk.tokenize.word_tokenize(output, language='spanish')
+        full_text = " ".join(output)
+        return nltk.tokenize.word_tokenize(full_text, language='spanish')
     
     def get_pages(self):
         """
