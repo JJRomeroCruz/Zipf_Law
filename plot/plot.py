@@ -7,6 +7,7 @@ from collections import Counter
 import plotly.express as px
 import pandas as pd
 import matplotlib.pyplot as plt
+from utils.class_document import document
 
 def interactive_word_plot(word_count_dict, top_n=50):
     """
@@ -100,6 +101,7 @@ def plot_word_freq_log(word_dict, top_n=50):
         plt.show()
 
 def complete_analysis(word_dict, top_n=50):
+    
     """
     Complete analysis with several visualizations
     """
@@ -124,9 +126,9 @@ def complete_analysis(word_dict, top_n=50):
     ax2.scatter(ranks, frequencies, s=80, alpha=0.7, color='coral')
     ax2.set_xscale('log')
     ax2.set_yscale('log')
-    ax2.set_xlabel('Rank (log scale)')
+    #ax2.set_xlabel('')
     ax2.set_ylabel('Frequency (log scale)')
-    ax2.set_title("Zipf Law: Frequency vs Rank")
+    ax2.set_title("Zipf Law: Frequency of words")
     ax2.grid(True, alpha=0.3)
 
     plt.tight_layout()
@@ -138,3 +140,56 @@ def complete_analysis(word_dict, top_n=50):
     print(f'Number of words: {total_words}')
     print(f"Unique words: {unique_words}")
     print(f"Most frequent word: {words[0]} ({frequencies[0]} times)")
+
+def complete_analysis_folder(path, top_n=50):
+    """
+    Analyses the frequency of the words in the pdfs of a folder and plots: 
+        - Top N most frequent words (linear scatter)
+        - log-log distribution (Zipf's Law)
+
+    Args: 
+
+    Returns: 
+    """
+    list_doc = []
+    for file in os.listdir(path):
+        if file.endswith(".pdf"):
+            # create list 
+            doc = document(os.path.join(path, file))
+            list_doc.append(doc.count_words())
+    
+    # obtain the labels
+    labels = [f for f in os.listdir(path) if f.endswith(".pdf")]
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 12))
+    #labels = ["Bible", "Divine Comedy", "Odisea", "Quixote"]
+    for data, label in zip(list_doc, labels):
+        sorted_words = sorted(data.items(), key=lambda x: x[1], reverse=True)
+        top_words = sorted_words[:top_n]
+        words = [item[0] for item in top_words]
+        freq = [item[1] for item in top_words]
+        ranks = range(1, len(words) + 1)
+
+        # first graph, linear scatter
+        ax1.scatter(range(len(words)), freq, s=50, label=label)
+        
+
+        # second graph, log scatter
+        ax2.scatter(ranks, freq, s=50, label=label)
+        
+    
+    ax1.set_xlabel('Words')
+    ax1.set_ylabel('Frequency')
+    ax1.set_title(f'Top {top_n} most frequent words')
+    ax1.grid(True)
+    ax1.set_xticks([])
+    ax1.legend()
+
+    ax2.set_xscale('log')
+    ax2.set_yscale('log')
+    ax2.set_ylabel('log(freq)')
+    ax2.set_title('Zipf Law')
+    ax2.grid(True)
+    ax2.legend()
+
+    plt.tight_layout()
+    plt.show()
