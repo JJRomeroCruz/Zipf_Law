@@ -95,7 +95,7 @@ def interactive_word_plot(word_count_dict, top_n=50):
     sorted_words = sorted(word_count_dict.items(), key=lambda x: x[1], reverse=True)
     top_words = sorted_words[:top_n]
     
-    # Crear DataFrame
+    # create the dataframe 
     df = pd.DataFrame(top_words, columns=['Palabra', 'Frecuencia'])
     df['Rango'] = range(1, len(df) + 1)
     
@@ -110,7 +110,6 @@ def interactive_word_plot(word_count_dict, top_n=50):
     
     fig.show()
 
-#interactive_word_plot(v, top_n=50)
 
 def plot_frequency_scatter(word_dict, top_n=50):
     """
@@ -143,33 +142,34 @@ def plot_frequency_scatter(word_dict, top_n=50):
     plt.show()
 
 def plot_word_freq_log(word_dict, top_n=50):
+        
         """
         
         """
-    sorted_words = sorted(word_dict.items(), key=lambda x: x[1], reverse=True)
-    top_words = sorted_words[:top_n]
+        sorted_words = sorted(word_dict.items(), key=lambda x: x[1], reverse=True)
+        top_words = sorted_words[:top_n]
 
-    words = [items[0] for item in top_words]
-    frequencies = [item[1] for item in top_words]
-    ranks = range(1, len(words) + 1)
+        words = [item[0] for item in top_words]
+        frequencies = [item[1] for item in top_words]
+        ranks = range(1, len(words) + 1)
 
-    plt.figure(figsize=(12, 8))
-    plt.scatter(ranks, frequencies, alpha=0.6, s=50, color='red')
-    plt.xscale('log')
-    plt.yscale('log')
+        plt.figure(figsize=(12, 8))
+        plt.scatter(ranks, frequencies, alpha=0.6, s=50, color='red')
+        plt.xscale('log')
+        plt.yscale('log')
 
-    # etiquetas algunas palabras clave
-    for i in [0, len(words)//4, len(words)//2, -1]: # primera, 1/4, mitad, ultima
-        plt.annotate(words[i], (ranks[i], frequencies[i]), 
-                    xytext=(5, 5), textcoords='offset points', 
-                    fontsize=9, alpha=0.8)
-        
-    plt.xlabel('Rango (log scale)')
-    plt.ylabel('Frecuencia (log scale)')
-    plt.title('Ley de Zipf: Frecuencia vs Rango (escala logaritmica)')
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-    plt.show()
+        # etiquetas algunas palabras clave
+        for i in [0, len(words)//4, len(words)//2, -1]: # primera, 1/4, mitad, ultima
+            plt.annotate(words[i], (ranks[i], frequencies[i]), 
+                        xytext=(5, 5), textcoords='offset points', 
+                        fontsize=9, alpha=0.8)
+            
+        plt.xlabel('Rango (log scale)')
+        plt.ylabel('Frecuencia (log scale)')
+        plt.title('Ley de Zipf: Frecuencia vs Rango (escala logaritmica)')
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        plt.show()
 
 def complete_analysis(word_dict, top_n=50):
     """
@@ -179,7 +179,7 @@ def complete_analysis(word_dict, top_n=50):
     top_words = sorted_words[:top_n]
 
     words = [item[0] for item in top_words]
-    frequencies = [items[1] for item in top_words]
+    frequencies = [item[1] for item in top_words]
     ranks = range(1, len(words) + 1)
 
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 12))
@@ -211,5 +211,15 @@ def complete_analysis(word_dict, top_n=50):
     print(f"Unique words: {unique_words}")
     print(f"Most frequent word: {words[0]} ({frequencies[0]} times)")
 
+def combine(book1, book2):
+    """
+    Args: 
 
+    Returns: 
+    """
+    # load the two books
+
+    # tokenize the text
+
+    # combine the two texts
 
