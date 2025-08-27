@@ -8,6 +8,9 @@ import plotly.express as px
 import pandas as pd
 import matplotlib.pyplot as plt
 from utils.class_document import document
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+from scipy.stats import linregress
 
 def interactive_word_plot(word_count_dict, top_n=50):
     """
@@ -151,6 +154,7 @@ def complete_analysis_folder(path, top_n=50):
 
     Returns: 
     """
+    output_folder = "results"
     list_doc = []
     for file in os.listdir(path):
         if file.endswith(".pdf"):
@@ -160,8 +164,9 @@ def complete_analysis_folder(path, top_n=50):
     
     # obtain the labels
     labels = [f for f in os.listdir(path) if f.endswith(".pdf")]
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 12))
-    #labels = ["Bible", "Divine Comedy", "Odisea", "Quixote"]
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 12))
+    os.makedirs(output_folder, exist_ok=True)
+    slopes = []
     for data, label in zip(list_doc, labels):
         sorted_words = sorted(data.items(), key=lambda x: x[1], reverse=True)
         top_words = sorted_words[:top_n]
@@ -173,10 +178,21 @@ def complete_analysis_folder(path, top_n=50):
         ax1.scatter(range(len(words)), freq, s=50, label=label)
         
 
-        # second graph, log scatter
-        ax2.scatter(ranks, freq, s=50, label=label)
+        # second graph, log scatter with regression
+        x = sm.add_constant(ranks) # add a columns for the intercept
+        model1 = sm.OLS(np.log(freq), np.log(x))
+        results = model1.fit()
+        with open(os.path.join(output_folder, f"res_{label}.txt"), "w", encoding="utf-8") as f:
+            f.write((results.summary()).as_text())
         
-    
+        slope, intercept, r_value, p_value, std_err = linregress(np.log(ranks), np.log(freq))
+
+        ax2.scatter(np.log(ranks), np.log(freq), s=50, label=label)
+        y = slope*np.log(ranks) + intercept
+        #y = np.exp(results.predict(np.log(x)))
+        ax2.plot(np.log(ranks), y, '--', label=f"{label} pred")
+        slopes.append(slope)
+
     ax1.set_xlabel('Words')
     ax1.set_ylabel('Frequency')
     ax1.set_title(f'Top {top_n} most frequent words')
@@ -184,8 +200,8 @@ def complete_analysis_folder(path, top_n=50):
     ax1.set_xticks([])
     ax1.legend()
 
-    ax2.set_xscale('log')
-    ax2.set_yscale('log')
+    #ax2.set_xscale('log')
+    #ax2.set_yscale('log')
     ax2.set_ylabel('log(freq)')
     ax2.set_title('Zipf Law')
     ax2.grid(True)
@@ -193,3 +209,7 @@ def complete_analysis_folder(path, top_n=50):
 
     plt.tight_layout()
     plt.show()
+
+    # slopes or indices of the power law
+    print(f"Los indices de {labels} \n son {slopes}")
+    return 
