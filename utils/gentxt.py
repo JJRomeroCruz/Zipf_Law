@@ -6,11 +6,51 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 import textwrap
 
-def generateTXT():
-    ss 
+#def generateTXT():
+#    ss 
 
-def generateTXTconcat():
-    ssss
+def generateTXTconcat(model, tokenizer, prompt, num_words=2000, block_size=200, temperature=0.9):
+    """
+    Args: 
+        model: language model
+        tokenizer: tokenizer associated to the model
+        prompt (str): Initial text
+        num_words (int): Aproximate number of words to generate
+        block_size (int): words for each block
+        temperature (float): Randomness controller
+    Returns: 
+        str: text generated
+    """
+    generated_text = prompt
+    current_words = len(generated_text)
+
+    # use the gpu if avaliable
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = model.to(device)
+
+    while current_words < num_words:
+        input_ids = tokenizer.encode(generated_text, return_tensors="pt", truncation=True).to(device)
+
+        output_ids = model.generate(
+            input_ids,
+            max_length=input_ids.shape[1] + block_size * 2,  # más tokens que palabras
+            do_sample=True,
+            top_k=50,
+            top_p=0.9,
+            temperature=temperature,
+            repetition_penalty=1.2,
+            pad_token_id=tokenizer.eos_token_id
+        )
+
+        new_text = tokenizer.decode(output_ids[0], skip_special_tokens=True)
+
+        # add the other generated in the last block
+        generated_text = new_text
+        current_words = len(generated_text.split())
+
+        print(f"Progress: {current_words}/{num_words} words")
+
+    return generated_text
 
 def savePDF(text, filename="output.pdf"):
     """
