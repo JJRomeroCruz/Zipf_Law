@@ -55,9 +55,12 @@ def generateTXTconcat(model, tokenizer, prompt, num_words=2000, block_size=200, 
         )
 
         new_text = tokenizer.decode(output_ids[0], skip_special_tokens=True)
+        
+        added_text = new_text[len(generated_text):]
+        generated_text += " " + added_text.strip()
 
         # add the other generated in the last block
-        generated_text = new_text
+        #generated_text = new_text
         current_words = len(generated_text.split())
 
         print(f"Progress: {current_words}/{num_words} words")
