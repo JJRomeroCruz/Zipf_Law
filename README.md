@@ -12,4 +12,4 @@ This project is licensed under the **GNU General Public License v3.0** – see t
 
 Created by Juan José Romero - juanjorcr98@gmail.com
 
-[Linkedin][https://www.linkedin.com/in/juan-jos%C3%A9-romero-cruz-ba1289191/]
+[Linkedin](https://www.linkedin.com/in/juan-jos%C3%A9-romero-cruz-ba1289191/)
